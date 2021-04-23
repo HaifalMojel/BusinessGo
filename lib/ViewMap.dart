@@ -545,33 +545,29 @@ class _ViewMapState extends State<ViewMap> {
           ),
           Transform.translate(
             offset: Offset(MediaQuery.of(context).size.width/15, MediaQuery.of(context).size.height/1.28),
-            child: Positioned(
-                left: MediaQuery.of(context).size.width/1.16,
-                top: MediaQuery.of(context).size.height/1.155,
-                child: Draggable(
-                    feedback: Container(),
-                    child: Column(
-                      children: <Widget>[
-                        Icon(Icons.arrow_forward_rounded , color: const Color(0xff1b5070), size: 20,),
-                        Icon(Icons.touch_app , color: const Color(0xff1b5070), size: 20,),
-                      ],
-                    ),
-                    childWhenDragging: Container(),
-                    onDragEnd: (details){
-                      if(proj == null)
-                        Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder:
-                                (context) =>
-                                user_input(project))
-                        );
-                      else
-                        Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder:
-                                (context) =>
-                                user_input(proj))
-                        );
-                    }
-                )
+            child: Draggable(
+                feedback: Container(),
+                child: Column(
+                  children: <Widget>[
+                    Icon(Icons.arrow_forward_rounded , color: const Color(0xff1b5070), size: 20,),
+                    Icon(Icons.touch_app , color: const Color(0xff1b5070), size: 20,),
+                  ],
+                ),
+                childWhenDragging: Container(),
+                onDragEnd: (details){
+                  if(proj == null)
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder:
+                            (context) =>
+                            user_input(project))
+                    );
+                  else
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder:
+                            (context) =>
+                            user_input(proj))
+                    );
+                }
             ),
           )
         ],
