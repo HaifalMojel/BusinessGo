@@ -4,7 +4,7 @@
         android:label="businessgo"
         android:icon="@mipmap/ic_launcher">
        <meta-data android:name="com.google.android.geo.API_KEY"
-           android:value="AIzaSyDBPVYuzma-WiG0EJYGDnfdiU3wo82hiro"/>
+           android:value="AIzaSyBHnJzJUi0H2QCVs3zQxX62gdryoyWfj1w"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

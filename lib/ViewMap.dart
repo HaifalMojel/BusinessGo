@@ -17,7 +17,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 import 'package:adobe_xd/pinned.dart';
-import 'package:permission/permission.dart';
+
 
 
 
@@ -618,7 +618,7 @@ class _ViewMapState extends State<ViewMap> {
                 Container(
                   width: 250,
                   height: 40,
-                  child: Text('عدد المنافسون:       ' + comp, textAlign: TextAlign.center,),
+                  child: Text('عدد المنافسين:       ' + comp, textAlign: TextAlign.center,),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(52.0),
                     gradient: LinearGradient(

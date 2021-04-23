@@ -233,7 +233,7 @@ class _user_nav_revenue_state extends State<user_nav_revenue> {
             child: SizedBox(
               width: MediaQuery.of(context).size.width / 1.7,
               child: Text(
-                'الأرباح السنوية المتوقعة',
+                'الايرادات السنوية المتوقعة',
                 style: TextStyle(
                   fontFamily: 'STC',
                   fontSize: 25,
@@ -249,10 +249,10 @@ class _user_nav_revenue_state extends State<user_nav_revenue> {
             child: SizedBox(
               width: MediaQuery.of(context).size.width / 1.5,
               child: Text(
-                'توقعات الايراد لكل سنه',
+                'توقعات الايرادات لكل سنة',
                 style: TextStyle(
                   fontFamily: 'STC',
-                  fontSize: 20,
+                  fontSize: 18,
                   color: const Color(0xff30a59a),
                 ),
                 textAlign: TextAlign.center,
@@ -294,7 +294,7 @@ class _user_nav_revenue_state extends State<user_nav_revenue> {
                       interval: 1),
                   primaryYAxis: NumericAxis(
                     title: AxisTitle(
-                        text: 'الايراد',
+                        text: 'الايرادات',
                         textStyle: TextStyle(
                             color: Colors.grey,
                             fontFamily: 'Roboto',

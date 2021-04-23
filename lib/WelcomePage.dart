@@ -1,48 +1,17 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:adobe_xd/pinned.dart';
 import 'dart:async';
 import 'sign_page.dart';
-import 'package:http/http.dart' as http;
+
+
 class WelcomePage extends StatefulWidget {
   @override
   _MyWelcomePageState createState() => _MyWelcomePageState();
 }
 
 class _MyWelcomePageState extends State<WelcomePage> {
-  void modelResult() async {
 
-    double Capital = 500000,
-        Shop_space = 150;
-    String city = "الرياض",
-        dis = "الندى";
-
-    var response = await http.post(
-        "https://floating-scrubland-60044.herokuapp.com/",
-        body: jsonEncode({
-          "Capital": Capital,
-          "Shop_space": Shop_space,
-          "City": city,
-          "District": dis,
-        })
-    );
-    print("1st response is  ${jsonDecode(response.body)}");
-    Capital = 200000 ;
-    Shop_space = 100;
-    city = "الرياض" ;dis = "الصحافة" ;
-    response = await http.post(
-        "https://floating-scrubland-60044.herokuapp.com/",
-        body: jsonEncode({
-          "Capital": Capital,
-          "Shop_space": Shop_space,
-          "City": city,
-          "District": dis,
-        })
-    );
-    print("2nd response is ${jsonDecode(response.body)}");
-
-  }
 
   @override
   void initState() {

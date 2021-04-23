@@ -17,8 +17,8 @@ class home_page extends StatelessWidget {
     getName(userID);
   }
 
-  Future<void> getName(String id) async {
-    await collRef.document(userID).get().then((DocumentSnapshot snap){
+  Future<void> getName(String id)  {
+     collRef.document(userID).get().then((DocumentSnapshot snap){
       fullName = snap.data['FullName'];
     });
   }
@@ -127,7 +127,7 @@ class home_page extends StatelessWidget {
                                               );
                                             },
                                             textColor: Colors.black54,
-                                            child: Text('     مفضلاتي       ',
+                                            child: Text('     مفضلاتي         ',
                                               style: TextStyle(
                                                   fontSize: 20,
                                                   color: Colors.black54
