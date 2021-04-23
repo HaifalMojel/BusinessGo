@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "62796706191",
+    "project_id": "business-go-18871",
+    "storage_bucket": "business-go-18871.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:62796706191:android:c073f4253c209596b15bfa",
+        "android_client_info": {
+          "package_name": "com.example.businessgo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "62796706191-fpr5e800mdk0tjr76el4dk42ug2e0p5d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0YdsQvF8u_1M-DiyhknxRM4APIHmezK4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "62796706191-fpr5e800mdk0tjr76el4dk42ug2e0p5d.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "62796706191-4tsqbnhhlievhvldsnooj0jmtgkfcg6l.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.businessgo"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
