@@ -36,10 +36,11 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.example.businessgo"
-        minSdkVersion 23
+        minSdkVersion 26
         targetSdkVersion 30
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -57,18 +58,8 @@ flutter {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation platform('com.google.firebase:firebase-bom:26.4.0')
-    implementation 'com.google.firebase:firebase-firestore'
-    implementation 'com.google.firebase:firebase-firestore-ktx'
-
-}
-
-android {
-
-    defaultConfig {
-        // ...
-        multiDexEnabled true
-        ndkVersion '21.3.6528147'
-
-    }
+    implementation platform('com.google.firebase:firebase-bom:27.1.0')
+    implementation 'com.google.firebase:firebase-firestore:22.1.2'
+    implementation 'com.google.firebase:firebase-auth:20.0.4'
+    implementation 'androidx.multidex:multidex:2.0.1'
 }
