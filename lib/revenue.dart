@@ -71,25 +71,25 @@ class _revenue_state extends State<revenue> {
                 /*2. Y-axis represents revenue which is calculated by :
                  Multiplying population of each age group of the selected district and average number of annual coffee consumption for each age group  */
                 _SalesData(2022 , 0.0),
-                _SalesData(2023, row[2]*240 + 0.0),
-                _SalesData(2024, row[3]*240 + 0.0),
-                _SalesData(2025, row[1]*210 + 0.0),
+                _SalesData(2023, row[2]*96 + 0.0),
+                _SalesData(2024, row[3]*96 + 0.0),
+                _SalesData(2025, row[1]*48 + 0.0),
               ];
             }
             else if(row[2] > row[1] && row[2] > row[3]){
               salesData = [
                 _SalesData(2022 , 0.0),
-                _SalesData(2023, row[1]*210+ 0.0),
-                _SalesData(2024, row[3]*240 + 0.0),
-                _SalesData(2025, row[2]*240+ 0.0),
+                _SalesData(2023, row[1]*48+ 0.0),
+                _SalesData(2024, row[3]*96 + 0.0),
+                _SalesData(2025, row[2]*96+ 0.0),
               ];
             }
             else{
               salesData = [
                 _SalesData(2022 , 0.0),
-                _SalesData(2023, row[1]*210 + 0.0),
-                _SalesData(2024, row[2]*240+ 0.0),
-                _SalesData(2025, row[3]*240 + 0.0),
+                _SalesData(2023, row[1]*48 + 0.0),
+                _SalesData(2024, row[2]*96+ 0.0),
+                _SalesData(2025, row[3]*96 + 0.0),
               ];
             }
           });

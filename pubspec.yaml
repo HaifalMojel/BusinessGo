@@ -19,7 +19,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  google_maps_flutter: ^1.2.0
+  google_maps_flutter: ^2.0.3
   adobe_xd: ^1.1.0+1
   firebase_auth: ^0.16.1
   cloud_firestore: ^0.13.7
@@ -31,16 +31,7 @@ dependencies:
   convex_bottom_bar: ^2.7.1+2
   cupertino_icons: ^0.1.2
   syncfusion_flutter_charts: ^18.4.46
-  # intl: ^0.16.1
-  # starflut: ^1.0.0
-  # geolocator: ^6.2.1
-  # search_map_place_v2: ^0.1.2-dev
-  # #path_provider: ^1.6.28
-  # flappy_search_bar: 1.4.1
-  # permission_handler: ^5.1.0+2
-  # flutter_range_slider: ^1.5.0
-  # global_configuration: ^1.6.0
-  # http: ^0.12.2
+
 
 dev_dependencies:
   flutter_test:
