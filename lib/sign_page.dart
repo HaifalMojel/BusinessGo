@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:adobe_xd/blend_mask.dart';
 import 'package:flutter/services.dart';
@@ -16,7 +17,7 @@ class _sign_pageState extends State<sign_page> {
   bool showflag1 = false , showflag2 = false ,enabledFlag = false , validate1 = false , nameValidate = false , userNameValidate = false ,
   emailValidate = false , passwordValidate = false , login1 = false , login2 = false;
   double y1 = 0;
-  final _textPssswordLogin = TextEditingController() , _textUserNameLogin = TextEditingController() ,
+  final _textPssswordLogin = TextEditingController(text: kDebugMode?'Ha111_':null) , _textUserNameLogin = TextEditingController(text: kDebugMode?'HaifaM':null) ,
       _textPssswordNew = TextEditingController() , _textEmailNew = TextEditingController() ,
       _textName = TextEditingController() , _textUserName = TextEditingController() , resetemail = TextEditingController();
 
