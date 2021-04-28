@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,12 +14,10 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:ui' as ui;
 import 'package:http/http.dart' as http;
 
-
-class user_nav_map extends StatefulWidget{
-
+class user_nav_map extends StatefulWidget {
   var project;
 
-  user_nav_map( project){
+  user_nav_map(project) {
     this.project = project;
   }
 
@@ -26,203 +25,142 @@ class user_nav_map extends StatefulWidget{
 }
 
 class _user_nav_map_state extends State<user_nav_map> {
-
   Project project;
-  double lng = 46.6701 , lat = 24.7311;
-  GoogleMapController mapController;
+  double lng = 46.6701, lat = 24.7311;
+  Completer<GoogleMapController> _controller = Completer();
   List<Marker> marker = [];
   var _markerIcon;
   var competitor;
   var population;
   Set<Circle> circles;
 
-  void _setMarkerIcon() async{
+  void _setMarkerIcon() async {
     _markerIcon = await getBytesFromAsset('assets/images/bgo_logo.png', 200);
   }
 
   Future<Uint8List> getBytesFromAsset(String path, int width) async {
     ByteData data = await rootBundle.load(path);
-    ui.Codec codec =
-    await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: width);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: width);
     ui.FrameInfo fi = await codec.getNextFrame();
     return (await fi.image.toByteData(format: ui.ImageByteFormat.png)).buffer.asUint8List();
   }
 
-  getLocation() async {
+  Future<String> getLocation() async {
     var rental;
     var userRef = Firestore.instance.collection('costs');
-    try{
-      await userRef.document(project.projectCostsID).get().then((DocumentSnapshot doc) => {
-        rental = doc.data['rCost']
-      });
-    }catch(Exception){}
-
+    try {
+      await userRef.document(project.projectCostsID).get().then((DocumentSnapshot doc) => {rental = doc.data['rCost']});
+    } catch (e) {
+      print(e);
+    }
     userRef = Firestore.instance.collection('locations');
-    try{
-      await userRef.document(project.locationID).get().then((DocumentSnapshot doc) => {
-        setState(() async{
-          lng = doc.data['longitude'];
-          lat = doc.data['latitude'];
-          competitor = doc.data['competitors'];
-          population = doc.data['population'];
-          var dis = doc.data['district'];
-          final request=await http.get("https://maps.googleapis.com/maps/api/place/textsearch/json?query=$dis+in+Riyadh&key=AIzaSyBHnJzJUi0H2QCVs3zQxX62gdryoyWfj1w");
-          var result = jsonDecode(request.body);
-          if(request.statusCode==200){
-            final LatLng southwest = LatLng(
-              result["results"][0]["geometry"]["viewport"]["southwest"]["lat"],
-              result["results"][0]["geometry"]["viewport"]["southwest"]["lng"],
-            );
+    try {
+      await userRef.document(project.locationID).get().then((DocumentSnapshot doc) async {
+        lng = doc.data['longitude'];
+        lat = doc.data['latitude'];
+        competitor = doc.data['competitors'];
+        population = doc.data['population'];
+        var dis = doc.data['district'];
+        // final request = await http.get(
+        //     "https://maps.googleapis.com/maps/api/place/textsearch/json?query=$dis+in+Riyadh&key=AIzaSyBHnJzJUi0H2QCVs3zQxX62gdryoyWfj1w");
+        // var result = jsonDecode(request.body);
+        //if (request.statusCode == 200) {
+        // final LatLng southwest = LatLng(
+        //   result["results"][0]["geometry"]["viewport"]["southwest"]["lat"],
+        //   result["results"][0]["geometry"]["viewport"]["southwest"]["lng"],
+        // );
+        // final LatLng northeast = LatLng(
+        //   result["results"][0]["geometry"]["viewport"]["northeast"]["lat"],
+        //   result["results"][0]["geometry"]["viewport"]["northeast"]["lng"],
+        // );
+        // LatLngBounds bounds = LatLngBounds(
+        //   southwest: southwest,
+        //   northeast: northeast,
+        // );
+        // GoogleMapController controller = await _controller.future;
+        //await controller.animateCamera(CameraUpdate.newLatLngBounds(bounds, 50.0));
+        //}
+        marker.add(
+          Marker(
+              markerId: MarkerId("id"),
+              draggable: false,
+              position: LatLng(lat, lng),
+              onTap: () {
+                competitor = competitor != 0 ? competitor : 3;
+                alertConfirmationDialog(context, rental, population, competitor.toString(), lng, lat, dis, project.space);
+              },
+              icon: BitmapDescriptor.fromBytes(_markerIcon)),
+        );
 
-            final LatLng northeast = LatLng(
-              result["results"][0]["geometry"]["viewport"]["northeast"]["lat"],
-              result["results"][0]["geometry"]["viewport"]["northeast"]["lng"],
-            );
-            LatLngBounds bounds = LatLngBounds(
-              southwest: southwest,
-              northeast: northeast,
-            );
-            mapController.animateCamera(
-                CameraUpdate.newLatLngBounds(bounds, 50.0)
-            );
-          }
-          setState(() {
-            marker.add(
-              Marker(
-                  markerId: MarkerId("id"),
-                  draggable: false,
-                  position: LatLng(lat, lng),
-                  onTap: (){
-                    competitor = competitor != 0 ? competitor : 3;alertConfirmationDialog(context , rental , population , competitor.toString() , lng , lat , dis , project.space);
-                  },
-                  icon: BitmapDescriptor.fromBytes(_markerIcon)
-              ),
-            );
-            circles = Set.from([Circle(
-              circleId: CircleId('c1'),
-              center: LatLng(lat, lng),
-              radius: 1000,
-              fillColor: Colors.blue.withOpacity(0.3),
-              strokeColor: Colors.transparent,
-            )]);
-          });
-        })
+        circles = Set.from([
+          Circle(
+            circleId: CircleId('c1'),
+            center: LatLng(lat, lng),
+            radius: 1000,
+            fillColor: Colors.blue.withOpacity(0.3),
+            strokeColor: Colors.transparent,
+          )
+        ]);
       });
-    }catch(Exception){}
+    } catch (e) {
+      print(e);
+    }
+    return '';
   }
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     _setMarkerIcon();
-    getLocation();
   }
 
-  _user_nav_map_state(proj){
+  _user_nav_map_state(proj) {
     project = proj;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          Scaffold(
-              bottomNavigationBar: ConvexAppBar(
-                items: [
-                  TabItem(icon: Icon(Icons.home , size: 35, color: Colors.teal), title: ''),
-                  TabItem(icon: Icon(Icons.map , size: 35, color: Colors.teal), title: ''),
-                  TabItem(icon: Icon(Icons.monetization_on , size: 35, color: Colors.teal), title: ''),
-                  TabItem(icon: Icon(Icons.show_chart , size: 35, color: Colors.teal), title: ''),
-                  TabItem(icon: Icon(Icons.settings , size: 35, color: Colors.teal), title: ''),
-                ],
-                initialActiveIndex: 1,//optional, default as 0
-                onTap: (int i) => {
-                  if(i == 0){
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder:
-                            (context) =>
-                            home_page(project.projectOwnerID)
-                        )
-                    )
-                  }
-                  else if(i == 3){
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder:
-                            (context) =>
-                            user_nav_revenue(project)
-                        )
-                    )
-                  }
-                  else if(i == 2){
-                      Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder:
-                              (context) =>
-                              user_nav_costs(project)
-                          )
-                      )
-                    }
-                    else if(i == 4){
-                        Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder:
-                                (context) =>
-                                user_input(project)
-                            )
-                        )
-                      }
-                },
-                backgroundColor: const Color(0xffeff8f8),
-              )
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height/1.1,
-            decoration: BoxDecoration(
-              color: const Color(0xffd3edea),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0x29000000),
-                  offset: Offset(0, 3),
-                  blurRadius: 6,
-                ),
-              ],
-            ),
-          ),
-          Transform.translate(
-              offset: Offset(MediaQuery.of(context).size.width/12, 0),
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width - MediaQuery.of(context).size.width/12,
-                height: MediaQuery.of(context).size.height/1.1,
-                child: Stack(
-                  children:[
-                    Padding(
-                      padding: const EdgeInsets.only(top: 0),
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width - MediaQuery.of(context).size.width/12,
-                        height: MediaQuery.of(context).size.height/1.1,
-                        child: GoogleMap(
-                          onMapCreated: (GoogleMapController googleMapController){
-                            setState(() {
-                              mapController = googleMapController;
-                            });
-                          },
-                          initialCameraPosition: CameraPosition(
-                              target: LatLng(lat, lng), zoom: 10),
-                          markers: Set.from(marker),
-                          circles: circles,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              )
-          ),
+      bottomNavigationBar: ConvexAppBar(
+        items: [
+          TabItem(icon: Icon(Icons.home, size: 35, color: Colors.teal), title: ''),
+          TabItem(icon: Icon(Icons.map, size: 35, color: Colors.teal), title: ''),
+          TabItem(icon: Icon(Icons.monetization_on, size: 35, color: Colors.teal), title: ''),
+          TabItem(icon: Icon(Icons.show_chart, size: 35, color: Colors.teal), title: ''),
+          TabItem(icon: Icon(Icons.settings, size: 35, color: Colors.teal), title: ''),
         ],
+        initialActiveIndex: 1, //optional, default as 0
+        onTap: (int i) => {
+          if (i == 0)
+            {Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => home_page(project.projectOwnerID)))}
+          else if (i == 3)
+            {Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => user_nav_revenue(project)))}
+          else if (i == 2)
+            {Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => user_nav_costs(project)))}
+          else if (i == 4)
+            {Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => user_input(project)))}
+        },
+        backgroundColor: const Color(0xffeff8f8),
       ),
+      body: FutureBuilder(
+          future: getLocation(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData)
+              return GoogleMap(
+                onMapCreated: (GoogleMapController googleMapController) {
+                  _controller.complete(googleMapController);
+                },
+                initialCameraPosition: CameraPosition(target: LatLng(lat, lng), zoom: 10),
+                markers: Set.from(marker),
+                circles: circles,
+              );
+            else
+              return Center(child: CircularProgressIndicator());
+          }),
     );
   }
 
-  alertConfirmationDialog(BuildContext context , double rental , population , comp , lng , lat , district , double space) {
+  alertConfirmationDialog(BuildContext context, double rental, population, comp, lng, lat, district, double space) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -234,18 +172,16 @@ class _user_nav_map_state extends State<user_nav_map> {
                 Container(
                   width: 250,
                   height: 40,
-                  child: Text('سعر الايجار:     ' + (rental/space).round().toString() + ' ر.س / م² ' , textAlign: TextAlign.center,),
+                  child: Text(
+                    'سعر الايجار:     ' + (rental / space).round().toString() + ' ر.س / م² ',
+                    textAlign: TextAlign.center,
+                  ),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(52.0),
                     gradient: LinearGradient(
                       begin: Alignment(0.0, -1.0),
                       end: Alignment(0.0, 1.0),
-                      colors: [
-                        const Color(0xfffcffff),
-                        const Color(0xfff3f8f7),
-                        const Color(0xfff7fbfa),
-                        const Color(0xffffffff)
-                      ],
+                      colors: [const Color(0xfffcffff), const Color(0xfff3f8f7), const Color(0xfff7fbfa), const Color(0xffffffff)],
                       stops: [0.0, 0.325, 0.906, 1.0],
                     ),
                     boxShadow: [
@@ -261,18 +197,16 @@ class _user_nav_map_state extends State<user_nav_map> {
                 Container(
                   width: 250,
                   height: 40,
-                  child: Text('عدد المنافسين:        ' + comp, textAlign: TextAlign.center,),
+                  child: Text(
+                    'عدد المنافسين:        ' + comp,
+                    textAlign: TextAlign.center,
+                  ),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(52.0),
                     gradient: LinearGradient(
                       begin: Alignment(0.0, -1.0),
                       end: Alignment(0.0, 1.0),
-                      colors: [
-                        const Color(0xfffcffff),
-                        const Color(0xfff3f8f7),
-                        const Color(0xfff7fbfa),
-                        const Color(0xffffffff)
-                      ],
+                      colors: [const Color(0xfffcffff), const Color(0xfff3f8f7), const Color(0xfff7fbfa), const Color(0xffffffff)],
                       stops: [0.0, 0.325, 0.906, 1.0],
                     ),
                     boxShadow: [
@@ -288,18 +222,16 @@ class _user_nav_map_state extends State<user_nav_map> {
                 Container(
                   width: 250,
                   height: 40,
-                  child: Text('عدد السكان:     ' + population.toString() , textAlign: TextAlign.center,),
+                  child: Text(
+                    'عدد السكان:     ' + population.toString(),
+                    textAlign: TextAlign.center,
+                  ),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(52.0),
                     gradient: LinearGradient(
                       begin: Alignment(0.0, -1.0),
                       end: Alignment(0.0, 1.0),
-                      colors: [
-                        const Color(0xfffcffff),
-                        const Color(0xfff3f8f7),
-                        const Color(0xfff7fbfa),
-                        const Color(0xffffffff)
-                      ],
+                      colors: [const Color(0xfffcffff), const Color(0xfff3f8f7), const Color(0xfff7fbfa), const Color(0xffffffff)],
                       stops: [0.0, 0.325, 0.906, 1.0],
                     ),
                     boxShadow: [
@@ -314,7 +246,6 @@ class _user_nav_map_state extends State<user_nav_map> {
               ],
             ),
           ),
-
         );
       },
     );
