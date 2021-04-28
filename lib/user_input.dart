@@ -21,23 +21,15 @@ class user_input extends StatefulWidget {
 }
 
 class _user_input extends State<user_input> {
-  String dropdownValue1 = 'المدينة',
-      dropdownValue2 = 'القطاع',
-      dropdownValue3 = 'الدولة',
-      userID;
+  String dropdownValue1 = 'المدينة', dropdownValue2 = 'القطاع', dropdownValue3 = 'الدولة', userID;
 
   RangeValues _currentRangeValues = const RangeValues(30, 500);
 
-  TextEditingController nameController = TextEditingController(),
-      moneyController = TextEditingController();
+  TextEditingController nameController = TextEditingController(), moneyController = TextEditingController();
 
-  bool correctMoney = true,
-      notEmptyName = true,
-      citySelected = false,
-      qSelected = false,
-      countrySelected = false;
+  bool correctMoney = true, notEmptyName = true, citySelected = false, qSelected = false, countrySelected = false;
 
-  Project p, proj;
+  Project  proj;
 
   _user_input(Project proj) {
     this.proj = proj;
@@ -50,20 +42,18 @@ class _user_input extends State<user_input> {
   }
 
   setData() {
-    setState(() {
-      dropdownValue2 = proj.industry;
-      nameController.text = proj.projectName;
-      moneyController.text = proj.capital.toString();
-      double min = proj.minSpace, max = proj.maxSpace;
-      _currentRangeValues = RangeValues(min, max);
-      var userRef = Firestore.instance.collection('locations');
-      userRef.document(proj.locationID).get().then((DocumentSnapshot doc) => {
-            setState(() {
-              dropdownValue1 = doc.data['city'];
-              dropdownValue3 = doc.data['country'];
-            })
-          });
+    dropdownValue2 = proj.industry;
+    nameController.text = proj.projectName;
+    moneyController.text = proj.capital.toString();
+    double min = proj.minSpace, max = proj.maxSpace;
+    _currentRangeValues = RangeValues(min, max);
+    CollectionReference userRef = Firestore.instance.collection('locations');
+    if(proj.locationID!=null)
+    userRef.document(proj.locationID).get().then((DocumentSnapshot doc) {
+      dropdownValue1 = doc.data['city'];
+      dropdownValue3 = doc.data['country'];
     });
+    setState(() {});
   }
 
   @override
@@ -85,13 +75,8 @@ class _user_input extends State<user_input> {
             child: Stack(
               children: <Widget>[
                 Pinned.fromSize(
-                  bounds: Rect.fromLTWH(
-                      0.0,
-                      0.0,
-                      MediaQuery.of(context).size.width,
-                      MediaQuery.of(context).size.height),
-                  size: Size(MediaQuery.of(context).size.width,
-                      MediaQuery.of(context).size.height),
+                  bounds: Rect.fromLTWH(0.0, 0.0, MediaQuery.of(context).size.width, MediaQuery.of(context).size.height),
+                  size: Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height),
                   pinLeft: true,
                   pinRight: true,
                   pinTop: true,
@@ -99,11 +84,7 @@ class _user_input extends State<user_input> {
                   child: Stack(
                     children: <Widget>[
                       Pinned.fromSize(
-                        bounds: Rect.fromLTWH(
-                            0.0,
-                            0.0,
-                            MediaQuery.of(context).size.width,
-                            MediaQuery.of(context).size.height),
+                        bounds: Rect.fromLTWH(0.0, 0.0, MediaQuery.of(context).size.width, MediaQuery.of(context).size.height),
                         size: Size(363.0, 812.0),
                         pinLeft: true,
                         pinRight: true,
@@ -146,8 +127,7 @@ class _user_input extends State<user_input> {
             ),
           ),
           Transform.translate(
-            offset: Offset(MediaQuery.of(context).size.width / 9,
-                MediaQuery.of(context).size.height / 4.2),
+            offset: Offset(MediaQuery.of(context).size.width / 9, MediaQuery.of(context).size.height / 4.2),
             child: SizedBox(
                 width: MediaQuery.of(context).size.width / 1.5,
                 child: Container(
@@ -172,41 +152,28 @@ class _user_input extends State<user_input> {
                       decoration: new InputDecoration(
                         focusColor: Colors.blue,
                         hintText: 'اسم المشروع',
-                        hintStyle: TextStyle(
-                            height: 0.0,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xff1b5070)),
-                        errorText: notEmptyName
-                            ? null
-                            : '                       اسم المشروع يجب الا يكون فارغ',
+                        hintStyle: TextStyle(height: 0.0, fontSize: 20, fontWeight: FontWeight.bold, color: const Color(0xff1b5070)),
+                        errorText: notEmptyName ? null : '                       اسم المشروع يجب الا يكون فارغ',
                         errorStyle: TextStyle(height: 0.0),
                       ),
-                      style: TextStyle(
-                          fontSize: 20,
-                          color: const Color(0xff1b5070),
-                          fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 20, color: const Color(0xff1b5070), fontWeight: FontWeight.bold),
                     ),
                   ),
                 )),
           ),
           Transform.translate(
-              offset: Offset(MediaQuery.of(context).size.width / 15,
-                  MediaQuery.of(context).size.height / 2.7),
+              offset: Offset(MediaQuery.of(context).size.width / 15, MediaQuery.of(context).size.height / 2.7),
               child: Container(
                 width: MediaQuery.of(context).size.width / 1.3,
                 height: MediaQuery.of(context).size.height / 16,
-                decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.blueGrey.withOpacity(0.5),
-                        spreadRadius: 5,
-                        blurRadius: 7,
-                        offset: Offset(0, 3),
-                      )
-                    ],
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10)),
+                decoration: BoxDecoration(boxShadow: [
+                  BoxShadow(
+                    color: Colors.blueGrey.withOpacity(0.5),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: Offset(0, 3),
+                  )
+                ], color: Colors.white, borderRadius: BorderRadius.circular(10)),
                 child: Row(
                   children: <Widget>[
                     SizedBox(
@@ -215,9 +182,7 @@ class _user_input extends State<user_input> {
                           textDirection: TextDirection.rtl,
                           child: InputDecorator(
                             decoration: InputDecoration(
-                              errorText: countrySelected
-                                  ? '              يجب تحديد الدولة اولا'
-                                  : null,
+                              errorText: countrySelected ? '              يجب تحديد الدولة اولا' : null,
                               errorStyle: TextStyle(height: 0, fontSize: 14),
                               border: InputBorder.none,
                             ),
@@ -225,8 +190,7 @@ class _user_input extends State<user_input> {
                               isExpanded: true,
                               underline: SizedBox(),
                               value: dropdownValue3,
-                              icon: Icon(Icons.arrow_drop_down_circle,
-                                  color: const Color(0x8b1b5070), size: 40),
+                              icon: Icon(Icons.arrow_drop_down_circle, color: const Color(0x8b1b5070), size: 40),
                               style: TextStyle(
                                 backgroundColor: Colors.white,
                                 fontFamily: 'STC',
@@ -242,10 +206,7 @@ class _user_input extends State<user_input> {
                                     countrySelected = false;
                                 });
                               },
-                              items: <String>[
-                                'الدولة',
-                                'السعودية'
-                              ].map<DropdownMenuItem<String>>((String value) {
+                              items: <String>['الدولة', 'السعودية'].map<DropdownMenuItem<String>>((String value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
                                   child: Center(
@@ -259,28 +220,23 @@ class _user_input extends State<user_input> {
                             ),
                           ),
                         )),
-                    Icon(Icons.location_city,
-                        color: const Color(0x8b1b5070), size: 40),
+                    Icon(Icons.location_city, color: const Color(0x8b1b5070), size: 40),
                   ],
                 ),
               )),
           Transform.translate(
-              offset: Offset(MediaQuery.of(context).size.width / 15,
-                  MediaQuery.of(context).size.height / 2.15),
+              offset: Offset(MediaQuery.of(context).size.width / 15, MediaQuery.of(context).size.height / 2.15),
               child: Container(
                 width: MediaQuery.of(context).size.width / 1.3,
                 height: MediaQuery.of(context).size.height / 16,
-                decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.blueGrey.withOpacity(0.5),
-                        spreadRadius: 5,
-                        blurRadius: 7,
-                        offset: Offset(0, 3),
-                      )
-                    ],
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10)),
+                decoration: BoxDecoration(boxShadow: [
+                  BoxShadow(
+                    color: Colors.blueGrey.withOpacity(0.5),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: Offset(0, 3),
+                  )
+                ], color: Colors.white, borderRadius: BorderRadius.circular(10)),
                 child: Row(
                   children: <Widget>[
                     SizedBox(
@@ -289,9 +245,7 @@ class _user_input extends State<user_input> {
                           textDirection: TextDirection.rtl,
                           child: InputDecorator(
                             decoration: InputDecoration(
-                              errorText: citySelected
-                                  ? '              يجب تحديد المدينة اولا'
-                                  : null,
+                              errorText: citySelected ? '              يجب تحديد المدينة اولا' : null,
                               errorStyle: TextStyle(height: 0, fontSize: 14),
                               border: InputBorder.none,
                             ),
@@ -299,8 +253,7 @@ class _user_input extends State<user_input> {
                               isExpanded: true,
                               underline: SizedBox(),
                               value: dropdownValue1,
-                              icon: Icon(Icons.arrow_drop_down_circle,
-                                  color: const Color(0x8b1b5070), size: 40),
+                              icon: Icon(Icons.arrow_drop_down_circle, color: const Color(0x8b1b5070), size: 40),
                               style: TextStyle(
                                 backgroundColor: Colors.white,
                                 fontFamily: 'STC',
@@ -316,10 +269,7 @@ class _user_input extends State<user_input> {
                                     citySelected = false;
                                 });
                               },
-                              items: <String>[
-                                'المدينة',
-                                'الرياض'
-                              ].map<DropdownMenuItem<String>>((String value) {
+                              items: <String>['المدينة', 'الرياض'].map<DropdownMenuItem<String>>((String value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
                                   child: Center(
@@ -333,28 +283,23 @@ class _user_input extends State<user_input> {
                             ),
                           ),
                         )),
-                    Icon(Icons.location_city,
-                        color: const Color(0x8b1b5070), size: 40),
+                    Icon(Icons.location_city, color: const Color(0x8b1b5070), size: 40),
                   ],
                 ),
               )),
           Transform.translate(
-              offset: Offset(MediaQuery.of(context).size.width / 15,
-                  MediaQuery.of(context).size.height / 1.8),
+              offset: Offset(MediaQuery.of(context).size.width / 15, MediaQuery.of(context).size.height / 1.8),
               child: Container(
                 width: MediaQuery.of(context).size.width / 1.3,
                 height: MediaQuery.of(context).size.height / 16,
-                decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.blueGrey.withOpacity(0.5),
-                        spreadRadius: 5,
-                        blurRadius: 7,
-                        offset: Offset(0, 3),
-                      )
-                    ],
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10)),
+                decoration: BoxDecoration(boxShadow: [
+                  BoxShadow(
+                    color: Colors.blueGrey.withOpacity(0.5),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: Offset(0, 3),
+                  )
+                ], color: Colors.white, borderRadius: BorderRadius.circular(10)),
                 child: Row(
                   children: <Widget>[
                     SizedBox(
@@ -363,9 +308,7 @@ class _user_input extends State<user_input> {
                           textDirection: TextDirection.rtl,
                           child: InputDecorator(
                             decoration: InputDecoration(
-                              errorText: qSelected
-                                  ? '               يجب تحديد القطاع اولا'
-                                  : null,
+                              errorText: qSelected ? '               يجب تحديد القطاع اولا' : null,
                               errorStyle: TextStyle(height: 0, fontSize: 14),
                               border: InputBorder.none,
                             ),
@@ -373,8 +316,7 @@ class _user_input extends State<user_input> {
                               isExpanded: true,
                               underline: SizedBox(),
                               value: dropdownValue2,
-                              icon: Icon(Icons.arrow_drop_down_circle,
-                                  color: const Color(0x8b1b5070), size: 40),
+                              icon: Icon(Icons.arrow_drop_down_circle, color: const Color(0x8b1b5070), size: 40),
                               style: TextStyle(
                                 backgroundColor: Colors.white,
                                 fontFamily: 'STC',
@@ -390,10 +332,7 @@ class _user_input extends State<user_input> {
                                     qSelected = false;
                                 });
                               },
-                              items: <String>[
-                                'القطاع',
-                                'المقاهي'
-                              ].map<DropdownMenuItem<String>>((String value) {
+                              items: <String>['القطاع', 'المقاهي'].map<DropdownMenuItem<String>>((String value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
                                   child: Center(
@@ -407,30 +346,24 @@ class _user_input extends State<user_input> {
                             ),
                           ),
                         )),
-                    Icon(Icons.business,
-                        color: const Color(0x8b1b5070), size: 40),
+                    Icon(Icons.business, color: const Color(0x8b1b5070), size: 40),
                   ],
                 ),
               )),
           Transform.translate(
-              offset: Offset(MediaQuery.of(context).size.width / 15,
-                  MediaQuery.of(context).size.height / 1.53),
+              offset: Offset(MediaQuery.of(context).size.width / 15, MediaQuery.of(context).size.height / 1.53),
               child: Container(
-                padding: EdgeInsets.fromLTRB(
-                    MediaQuery.of(context).size.width / 12, 0.0, 0.0, 0.0),
+                padding: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width / 12, 0.0, 0.0, 0.0),
                 width: MediaQuery.of(context).size.width / 1.3,
                 height: MediaQuery.of(context).size.height / 16,
-                decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.blueGrey.withOpacity(0.5),
-                        spreadRadius: 5,
-                        blurRadius: 7,
-                        offset: Offset(0, 3),
-                      )
-                    ],
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10)),
+                decoration: BoxDecoration(boxShadow: [
+                  BoxShadow(
+                    color: Colors.blueGrey.withOpacity(0.5),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: Offset(0, 3),
+                  )
+                ], color: Colors.white, borderRadius: BorderRadius.circular(10)),
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width / 1.55,
                   child: Directionality(
@@ -454,11 +387,8 @@ class _user_input extends State<user_input> {
                           border: InputBorder.none,
                           focusColor: Colors.blue,
                           hintText: 'رأس المال',
-                          hintStyle: TextStyle(
-                              height: 0.0, color: const Color(0x8b1b5070)),
-                          errorText: correctMoney
-                              ? null
-                              : '         يجب ادخال رأس مال لايقل عن 100,000',
+                          hintStyle: TextStyle(height: 0.0, color: const Color(0x8b1b5070)),
+                          errorText: correctMoney ? null : '         يجب ادخال رأس مال لايقل عن 100,000',
                           errorStyle: TextStyle(height: 0, fontSize: 14),
                           prefixIcon: const Icon(
                             Icons.attach_money,
@@ -470,8 +400,7 @@ class _user_input extends State<user_input> {
                 ),
               )),
           Transform.translate(
-            offset: Offset(MediaQuery.of(context).size.width / 4,
-                MediaQuery.of(context).size.height / 1.36),
+            offset: Offset(MediaQuery.of(context).size.width / 4, MediaQuery.of(context).size.height / 1.36),
             child: SizedBox(
               width: 151.0,
               child: Text(
@@ -516,8 +445,7 @@ class _user_input extends State<user_input> {
                 ),
               )),
           Transform.translate(
-            offset: Offset(MediaQuery.of(context).size.width / 12,
-                MediaQuery.of(context).size.height / 1.23),
+            offset: Offset(MediaQuery.of(context).size.width / 12, MediaQuery.of(context).size.height / 1.23),
             child: SizedBox(
               width: MediaQuery.of(context).size.width / 4,
               height: 24.0,
@@ -533,8 +461,7 @@ class _user_input extends State<user_input> {
             ),
           ),
           Transform.translate(
-            offset: Offset(MediaQuery.of(context).size.width / 1.5,
-                MediaQuery.of(context).size.height / 1.23),
+            offset: Offset(MediaQuery.of(context).size.width / 1.5, MediaQuery.of(context).size.height / 1.23),
             child: SizedBox(
               width: MediaQuery.of(context).size.width / 4,
               height: 22.0,
@@ -550,8 +477,7 @@ class _user_input extends State<user_input> {
             ),
           ),
           Transform.translate(
-            offset: Offset(MediaQuery.of(context).size.width / 3.1,
-                MediaQuery.of(context).size.height / 20),
+            offset: Offset(MediaQuery.of(context).size.width / 3.1, MediaQuery.of(context).size.height / 20),
             child:
                 // Adobe XD layer: 'logo3-07' (group)
                 SizedBox(
@@ -560,11 +486,7 @@ class _user_input extends State<user_input> {
               child: Stack(
                 children: <Widget>[
                   Pinned.fromSize(
-                    bounds: Rect.fromLTWH(
-                        0.0,
-                        0.0,
-                        MediaQuery.of(context).size.width,
-                        MediaQuery.of(context).size.height / 2.8),
+                    bounds: Rect.fromLTWH(0.0, 0.0, MediaQuery.of(context).size.width, MediaQuery.of(context).size.height / 2.8),
                     size: Size(MediaQuery.of(context).size.width, 320.0),
                     pinLeft: true,
                     pinRight: true,
@@ -587,14 +509,10 @@ class _user_input extends State<user_input> {
             ),
           ),
           Transform.translate(
-              offset: Offset(MediaQuery.of(context).size.width / 20,
-                  MediaQuery.of(context).size.height / 50),
+              offset: Offset(MediaQuery.of(context).size.width / 20, MediaQuery.of(context).size.height / 50),
               child: IconButton(
                 onPressed: () {
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => home_page(this.userID)));
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => home_page(this.userID)));
                 },
                 icon: Icon(
                   Icons.backspace,
@@ -603,27 +521,23 @@ class _user_input extends State<user_input> {
                 iconSize: 30.0,
               )),
           Transform.translate(
-            offset: Offset(MediaQuery.of(context).size.width / 1.22,
-                MediaQuery.of(context).size.height / 1.158),
+            offset: Offset(MediaQuery.of(context).size.width / 1.22, MediaQuery.of(context).size.height / 1.158),
             child: Container(
               width: 66.0,
               height: 62.0,
               decoration: BoxDecoration(
-                borderRadius:
-                    BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
+                borderRadius: BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
                 color: const Color(0xffeff8f8),
               ),
             ),
           ),
           Transform.translate(
-            offset: Offset(MediaQuery.of(context).size.width / 1.20,
-                MediaQuery.of(context).size.height / 1.15),
+            offset: Offset(MediaQuery.of(context).size.width / 1.20, MediaQuery.of(context).size.height / 1.15),
             child: Container(
               width: 50.0,
               height: 50.0,
               decoration: BoxDecoration(
-                borderRadius:
-                    BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
+                borderRadius: BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
                 color: const Color(0xffcaeeee),
               ),
             ),
@@ -658,23 +572,15 @@ class _user_input extends State<user_input> {
                         dropdownValue2 != 'القطاع' &&
                         dropdownValue3 != 'الدولة' &&
                         correctMoney) {
-                      p = Project(
-                          nameController.text,
-                          double.parse(moneyController.text).round() + 0.0,
-                          dropdownValue2,
-                          uid);
-                      if (proj != null) p.projectID = proj.projectID;
-                      p.minSpace = _currentRangeValues.start;
-                      p.maxSpace = _currentRangeValues.end;
+                      proj = Project(nameController.text, double.parse(moneyController.text).round() + 0.0, dropdownValue2, uid);
+                      if (proj != null) proj.projectID = proj.projectID;
+                      proj.minSpace = _currentRangeValues.start;
+                      proj.maxSpace = _currentRangeValues.end;
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => ViewMap(
-                                  double.parse(moneyController.text).round(),
-                                  p,
-                                  dropdownValue1,
-                                  dropdownValue3,
-                                  proj)));
+                              builder: (context) =>
+                                  ViewMap(double.parse(moneyController.text).round(), proj, dropdownValue1, dropdownValue3, proj)));
                     }
                     if (moneyController.text.isEmpty)
                       setState(() {
