@@ -70,26 +70,30 @@ class _revenue_state extends State<revenue> {
                 //1.X-axis represents age group
                 /*2. Y-axis represents revenue which is calculated by :
                  Multiplying population of each age group of the selected district and average number of annual coffee consumption for each age group  */
-                _SalesData(2022 , 0.0),
-                _SalesData(2023, row[2]*96 + 0.0),
-                _SalesData(2024, row[3]*96 + 0.0),
-                _SalesData(2025, row[1]*48 + 0.0),
+                _SalesData(15 , 0.0),
+                _SalesData(25, row[2]*96*18*0.02 + 0.0),
+                _SalesData(35, row[3]*96*18*0.02 + 0.0),
+                _SalesData(45, row[1]*48*18*0.02 + 0.0),
+
               ];
+
+
+
             }
             else if(row[2] > row[1] && row[2] > row[3]){
               salesData = [
-                _SalesData(2022 , 0.0),
-                _SalesData(2023, row[1]*48+ 0.0),
-                _SalesData(2024, row[3]*96 + 0.0),
-                _SalesData(2025, row[2]*96+ 0.0),
+                _SalesData(15 , 0.0),
+                _SalesData(25, row[1]*48*18*0.02+ 0.0),
+                _SalesData(35, row[3]*96*18*0.02 + 0.0),
+                _SalesData(45, row[2]*96*18*0.02+ 0.0),
               ];
             }
             else{
               salesData = [
-                _SalesData(2022 , 0.0),
-                _SalesData(2023, row[1]*48 + 0.0),
-                _SalesData(2024, row[2]*96+ 0.0),
-                _SalesData(2025, row[3]*96 + 0.0),
+                _SalesData(15 , 0.0),
+                _SalesData(25, row[1]*48*18*0.02 + 0.0),
+                _SalesData(35, row[2]*96*18*0.02+ 0.0),
+                _SalesData(45, row[3]*96*18*0.02 + 0.0),
               ];
             }
           });
@@ -221,7 +225,7 @@ class _revenue_state extends State<revenue> {
                   child: OutlineButton(
                     color: const Color(0xffb7e0ee),
                     onPressed: () async{
-                      if(proj != null){
+                      if(proj.revenueID != null){
                         setState(() {
                           loc.id = proj.locationID;
                           costs.id = proj.projectCostsID;
@@ -399,7 +403,7 @@ class _revenue_state extends State<revenue> {
             child: SizedBox(
               width: MediaQuery.of(context).size.width/1.5,
               child: Text(
-                'توقعات الايرادات لكل سنة',
+                'توقعات الايرادات في السنة ',
                 style: TextStyle(
                   fontFamily: 'STC',
                   fontSize: 18,
@@ -432,7 +436,7 @@ class _revenue_state extends State<revenue> {
               child: SfCartesianChart(
                   primaryXAxis: NumericAxis(
                       title: AxisTitle(
-                          text: 'السنوات',
+                          text: 'الفئات العمرية',
                           textStyle: TextStyle(
                               color: Colors.grey,
                               fontFamily: 'Roboto',
@@ -441,7 +445,7 @@ class _revenue_state extends State<revenue> {
                               fontWeight: FontWeight.w300
                           )
                       ),
-                    interval: 1
+                    interval: 10
                   ),
                   primaryYAxis: NumericAxis(
                       title: AxisTitle(
@@ -466,6 +470,7 @@ class _revenue_state extends State<revenue> {
                       markerSettings: MarkerSettings(isVisible: true,color: const Color(0xff01756a)),
                       name: ' توقعات الإيرادات'
                     ),
+
                   ]),
             ),
           ),

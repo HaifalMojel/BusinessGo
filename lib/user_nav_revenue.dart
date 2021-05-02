@@ -42,10 +42,10 @@ class _user_nav_revenue_state extends State<user_nav_revenue> {
       userRef.document(project.revenueID).get().then((DocumentSnapshot doc) => {
             setState(() {
               salesData = [
-                _SalesData(2022, 0.0),
-                _SalesData(2023, doc.data['value1']),
-                _SalesData(2024, doc.data['value2']),
-                _SalesData(2025, doc.data['value3']),
+                _SalesData(15, 0.0),
+                _SalesData(25, doc.data['value1']),
+                _SalesData(35, doc.data['value2']),
+                _SalesData(45, doc.data['value3']),
               ];
               print(
                   'sales data is ${salesData.map((e) => e.months).toList().toString()}');
@@ -249,7 +249,7 @@ class _user_nav_revenue_state extends State<user_nav_revenue> {
             child: SizedBox(
               width: MediaQuery.of(context).size.width / 1.5,
               child: Text(
-                'توقعات الايرادات لكل سنة',
+                'توقعات الايرادات لكل  سنة',
                 style: TextStyle(
                   fontFamily: 'STC',
                   fontSize: 18,
@@ -284,14 +284,14 @@ class _user_nav_revenue_state extends State<user_nav_revenue> {
               child: SfCartesianChart(
                   primaryXAxis: NumericAxis(
                       title: AxisTitle(
-                          text: 'السنوات',
+                          text: 'الفئات العمرية',
                           textStyle: TextStyle(
                               color: Colors.grey,
                               fontFamily: 'Roboto',
                               fontSize: 16,
                               fontStyle: FontStyle.italic,
                               fontWeight: FontWeight.w300)),
-                      interval: 1),
+                      interval: 10),
                   primaryYAxis: NumericAxis(
                     title: AxisTitle(
                         text: 'الايرادات',

@@ -42,18 +42,18 @@ class _user_input extends State<user_input> {
   }
 
   setData() {
-    dropdownValue2 = proj.industry;
-    nameController.text = proj.projectName;
-    moneyController.text = proj.capital.toString();
-    double min = proj.minSpace, max = proj.maxSpace;
-    _currentRangeValues = RangeValues(min, max);
-    CollectionReference userRef = Firestore.instance.collection('locations');
-    if(proj.locationID!=null)
-    userRef.document(proj.locationID).get().then((DocumentSnapshot doc) {
-      dropdownValue1 = doc.data['city'];
-      dropdownValue3 = doc.data['country'];
-    });
-    setState(() {});
+    setState(() {
+      dropdownValue2 = proj.industry;
+      nameController.text = proj.projectName;
+      moneyController.text = proj.capital.toString();
+      double min = proj.minSpace, max = proj.maxSpace;
+      _currentRangeValues = RangeValues(min, max);
+      CollectionReference userRef = Firestore.instance.collection('locations');
+      if(proj.locationID!=null)
+        userRef.document(proj.locationID).get().then((DocumentSnapshot doc) {
+          dropdownValue1 = doc.data['city'];
+          dropdownValue3 = doc.data['country'];
+        });});
   }
 
   @override
@@ -511,8 +511,10 @@ class _user_input extends State<user_input> {
           Transform.translate(
               offset: Offset(MediaQuery.of(context).size.width / 20, MediaQuery.of(context).size.height / 50),
               child: IconButton(
-                onPressed: () {
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => home_page(this.userID)));
+                onPressed: () async {
+                  final FirebaseAuth auth = FirebaseAuth.instance;
+                  final FirebaseUser user = await auth.currentUser();
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => home_page(user.uid)));
                 },
                 icon: Icon(
                   Icons.backspace,
@@ -573,7 +575,6 @@ class _user_input extends State<user_input> {
                         dropdownValue3 != 'الدولة' &&
                         correctMoney) {
                       proj = Project(nameController.text, double.parse(moneyController.text).round() + 0.0, dropdownValue2, uid);
-                      if (proj != null) proj.projectID = proj.projectID;
                       proj.minSpace = _currentRangeValues.start;
                       proj.maxSpace = _currentRangeValues.end;
                       Navigator.pushReplacement(

@@ -14,12 +14,15 @@ class home_page extends StatelessWidget {
 
   home_page(String userID){
     this.userID = userID;
+    print(userID);
     getName(userID);
+
   }
 
   Future<void> getName(String id)  {
      collRef.document(userID).get().then((DocumentSnapshot snap){
       fullName = snap.data['FullName'];
+      print(fullName);
     });
   }
   

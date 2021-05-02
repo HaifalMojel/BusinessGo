@@ -205,6 +205,9 @@ class _basic_costsState extends State<basic_costs> {
           fError = false;
           eqError = false;
         }
+        if (selectedValue + variableCost + fixedCost + eqCost + rCost > capital)
+          fError = true;
+        else
         FCost = selectedValue;
       });
   }
