@@ -102,9 +102,9 @@ class verification_page extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20.0),
                       ),
                       onPressed: ()  async {
-                        if(newUser == null){
+                        await newUser.reload();
+                        if(!(await FirebaseAuth.instance.currentUser()).isEmailVerified){
                           alert1Dialog(context);
-
 
                           }
                         //user.reload();
