@@ -15,17 +15,16 @@ import 'dart:ui' as ui;
 import 'package:http/http.dart' as http;
 
 class user_nav_map extends StatefulWidget {
-  var project;
+  Project project;
 
   user_nav_map(project) {
     this.project = project;
   }
 
-  _user_nav_map_state createState() => _user_nav_map_state(project);
+  _user_nav_map_state createState() => _user_nav_map_state();
 }
 
 class _user_nav_map_state extends State<user_nav_map> {
-  Project project;
   double lng = 46.6701, lat = 24.7311;
   Completer<GoogleMapController> _controller = Completer();
   List<Marker> marker = [];
@@ -34,7 +33,7 @@ class _user_nav_map_state extends State<user_nav_map> {
   var population;
   Set<Circle> circles;
 
-  void _setMarkerIcon() async {
+  Future _setMarkerIcon() async {
     _markerIcon = await getBytesFromAsset('assets/images/bgo_logo.png', 200);
   }
 
@@ -48,16 +47,17 @@ class _user_nav_map_state extends State<user_nav_map> {
   Future<String> getLocation() async {
     var rental;
     var userRef = Firestore.instance.collection('costs');
+await _setMarkerIcon();
     try {
-      await userRef.document(project.projectCostsID).get().then((DocumentSnapshot doc) => {rental = doc.data['rCost']});
+      await userRef.document(widget.project.projectCostsID).get().then((DocumentSnapshot doc) => {rental = doc.data['rCost']});
     } catch (e) {
       print(e);
     }
     userRef = Firestore.instance.collection('locations');
     try {
-      await userRef.document(project.locationID).get().then((DocumentSnapshot doc) async {
-        lng = doc.data['longitude'];
-        lat = doc.data['latitude'];
+      await userRef.document(widget.project.locationID).get().then((DocumentSnapshot doc) async {
+        double lng = doc.data['longitude'];
+        double lat = doc.data['latitude'];
         competitor = doc.data['competitors'];
         population = doc.data['population'];
         var dis = doc.data['district'];
@@ -82,12 +82,12 @@ class _user_nav_map_state extends State<user_nav_map> {
         //}
         marker.add(
           Marker(
-              markerId: MarkerId("id"),
+              markerId: MarkerId(DateTime.now().millisecondsSinceEpoch.toString()),
               draggable: false,
               position: LatLng(lat, lng),
               onTap: () {
                 competitor = competitor != 0 ? competitor : 3;
-                alertConfirmationDialog(context, rental, population, competitor.toString(), lng, lat, dis, project.space);
+                alertConfirmationDialog(context, rental, population, competitor.toString(), lng, lat, dis, widget.project.space);
               },
               icon: BitmapDescriptor.fromBytes(_markerIcon)),
         );
@@ -108,15 +108,6 @@ class _user_nav_map_state extends State<user_nav_map> {
     return '';
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _setMarkerIcon();
-  }
-
-  _user_nav_map_state(proj) {
-    project = proj;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -132,13 +123,13 @@ class _user_nav_map_state extends State<user_nav_map> {
         initialActiveIndex: 1, //optional, default as 0
         onTap: (int i) => {
           if (i == 0)
-            {Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => home_page(project.projectOwnerID)))}
+            {Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => home_page(widget.project.projectOwnerID)))}
           else if (i == 3)
-            {Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => user_nav_revenue(project)))}
+            {Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => user_nav_revenue(widget.project)))}
           else if (i == 2)
-            {Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => user_nav_costs(project)))}
+            {Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => user_nav_costs(widget.project)))}
           else if (i == 4)
-            {Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => user_input(project)))}
+            {Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => user_input(widget.project)))}
         },
         backgroundColor: const Color(0xffeff8f8),
       ),
@@ -146,14 +137,14 @@ class _user_nav_map_state extends State<user_nav_map> {
           future: getLocation(),
           builder: (context, snapshot) {
             if (snapshot.hasData)
-              return GoogleMap(
-                onMapCreated: (GoogleMapController googleMapController) {
+               return GoogleMap(
+                 onMapCreated: (GoogleMapController googleMapController) {
                   _controller.complete(googleMapController);
                 },
                 initialCameraPosition: CameraPosition(target: LatLng(lat, lng), zoom: 10),
                 markers: Set.from(marker),
                 circles: circles,
-              );
+              ); 
             else
               return Center(child: CircularProgressIndicator());
           }),

@@ -16,8 +16,8 @@ import 'home_page.dart';
 
 class revenue extends StatefulWidget{
 
-  var loc , project , costs;
-  Project proj;
+  var loc , costs;
+  Project proj, project;
 
   revenue(dis , project , costs , proj){
     loc = dis;
@@ -26,24 +26,14 @@ class revenue extends StatefulWidget{
     this.proj = proj;
   }
 
-  _revenue_state createState() => _revenue_state(loc , project , costs , proj);
+  _revenue_state createState() => _revenue_state();
 }
 
 class _revenue_state extends State<revenue> {
 
   List<_SalesData> salesData = [];
-  var loc;
   var ages;
-  var costs;
-  Project project , proj;
   ProjectRevenue rev;
-
-  _revenue_state(loc , project , costs , proj){
-    this.loc = loc;
-    this.project = project;
-    this.costs = costs;
-    this.proj = proj;
-  }
 
   Future loadData(district) async {
     ByteData data = await rootBundle.load("assets/revenue.xlsx");
@@ -106,7 +96,7 @@ class _revenue_state extends State<revenue> {
     return Scaffold(
       backgroundColor: const Color(0xffeff8f8),
       body: FutureBuilder(
-        future: loadData(loc.district),
+        future: loadData(widget.loc.district),
         builder: (context, snapshot) {
           if(snapshot.connectionState != ConnectionState.done) return Center(child: CircularProgressIndicator());
           return Stack(
@@ -224,31 +214,30 @@ class _revenue_state extends State<revenue> {
                       child: OutlineButton(
                         color: const Color(0xffb7e0ee),
                         onPressed: () async{
-                          if(proj.revenueID != null){
-                            setState(() {
-                              loc.id = proj.locationID;
-                              costs.id = proj.projectCostsID;
-                              rev.id = proj.revenueID;
-                              project.projectID = proj.projectID;
-                            });
+                          if(widget.proj.revenueID != null){
+                              widget.loc.id = widget.proj.projectID;
+                              widget.costs.id = widget.proj.projectID;
+                              rev.id = widget.proj.projectID;
+                              widget.project.projectID = widget.proj.projectID;
                           }
                           var collRef = Firestore.instance.collection('locations');
-                          await collRef.document(loc.id).setData({
-                            'longitude': loc.longitude,
-                            'latitude': loc.latitude,
-                            'city': loc.city,
-                            'country': loc.country,
-                            'district': loc.district,
-                            'population': loc.population,
-                            'competitors': loc.competitors
+                          await collRef.document(widget.loc.id).setData({
+                            'longitude': widget.loc.longitude,
+                            'latitude': widget.loc.latitude,
+                            'city': widget.loc.city,
+                            'country': widget.loc.country,
+                            'district': widget.loc.district,
+                            'population': widget.loc.population,
+                            'competitors': widget.loc.competitors
                           });
                           collRef = Firestore.instance.collection('costs');
-                          await collRef.document(costs.id).setData({
-                            'fixedCost': costs.fixedCost,
-                            'variableCost': costs.variableCost,
-                            'FCost': costs.fCost,
-                            'eqCost': costs.eqCost,
-                            'rCost': costs.rCost,
+                          print('here: ${rev.id}');
+                          await collRef.document(widget.costs.id).setData({
+                            'fixedCost': widget.costs.fixedCost,
+                            'variableCost': widget.costs.variableCost,
+                            'FCost': widget.costs.fCost,
+                            'eqCost': widget.costs.eqCost,
+                            'rCost': widget.costs.rCost,
                           });
                           collRef = Firestore.instance.collection('revenue');
                           await collRef.document(rev.id).setData({
@@ -256,28 +245,29 @@ class _revenue_state extends State<revenue> {
                             'value2': rev.value2,
                             'value3': rev.value3
                           });
-                          project.projectCostsID = costs.id;
-                          project.locationID = loc.id;
-                          project.revenueID = rev.id;
+                          widget.project.projectCostsID = widget.costs.id;
+                        
+                          widget.project.locationID = widget.loc.id;
+                          widget.project.revenueID = rev.id;
                           collRef = Firestore.instance.collection('project');
-                          await collRef.document(project.projectID).setData({
-                            'name' : project.projectName,
-                            'capital': project.capital,
-                            'industry': project.industry,
-                            'owner': project.projectOwnerID,
+                          await collRef.document(widget.project.projectID).setData({
+                            'name' : widget.project.projectName,
+                            'capital': widget.project.capital,
+                            'industry': widget.project.industry,
+                            'owner': widget.project.projectOwnerID,
                             'favourite': false,
-                            'locationID': project.locationID,
-                            'revenueID': project.revenueID,
-                            'costsID': project.projectCostsID,
-                            'minSpace': project.minSpace,
-                            'maxSpace': project.maxSpace,
-                            'space': project.space,
+                            'locationID': widget.project.locationID,
+                            'revenueID': widget.project.revenueID,
+                            'costsID': widget.project.projectCostsID,
+                            'minSpace': widget.project.minSpace,
+                            'maxSpace': widget.project.maxSpace,
+                            'space': widget.project.space,
                           });
                           Timer(Duration(seconds: 3),
                                   ()=>Navigator.pushReplacement(context,
                                   MaterialPageRoute(builder:
                                       (context) =>
-                                      home_page(project.projectOwnerID)
+                                      home_page(widget.project.projectOwnerID)
                                   )
                               )
                           );
@@ -337,7 +327,7 @@ class _revenue_state extends State<revenue> {
                           Navigator.pushReplacement(context,
                               MaterialPageRoute(builder:
                                   (context) =>
-                                  basic_costs(project.capital, costs.rCost , project , loc , null))
+                                  basic_costs(widget.project.capital, widget.costs.rCost , widget.project , widget.loc , null))
                           );
                         },
                         shape: new RoundedRectangleBorder(
