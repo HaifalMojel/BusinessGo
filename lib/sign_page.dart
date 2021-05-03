@@ -515,9 +515,18 @@ class _sign_pageState extends State<sign_page> {
                                   passwordValidate = true;
                                   return;
                                 }
-                                String  pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~_]).{6,}$';
-                                RegExp regExp = new RegExp(pattern);
-                                passwordValidate = !regExp.hasMatch(value);
+                                String pattern;
+                                bool isInvalid = false;
+                                pattern = r"""[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]""";
+                                if(!RegExp(pattern).hasMatch(value)) isInvalid = true;
+                                pattern = r"""[0-9]""";
+                                if(!RegExp(pattern).hasMatch(value)) isInvalid = true;
+                                pattern = r"""[a-z]""";
+                                if(!RegExp(pattern).hasMatch(value)) isInvalid = true;
+                                pattern = r"""[A-Z]""";
+                                if(!RegExp(pattern).hasMatch(value)) isInvalid = true;
+                                if(value.trim().length<8) isInvalid = true;
+                                passwordValidate = isInvalid;
                               },
                               textAlignVertical: TextAlignVertical.bottom,
                               decoration: new InputDecoration(
