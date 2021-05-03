@@ -45,13 +45,7 @@ class _revenue_state extends State<revenue> {
     this.proj = proj;
   }
 
-  @override
-  void initState(){
-    super.initState();
-    loadData(loc.district);
-  }
-
-  loadData(district) async {
+  Future loadData(district) async {
     ByteData data = await rootBundle.load("assets/revenue.xlsx");
     var bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
     var excel = Excel.decodeBytes(bytes);
@@ -59,7 +53,7 @@ class _revenue_state extends State<revenue> {
       for (var row in excel.tables[table].rows) {
         print(row[0] +  ' ' + district);
         if(district == row[0]){
-          setState(() {
+      
           //**************** We have three different ranges of age groups (15-20 , 20-25 , 25-40 )****************
 
             //To find the maximum from each age group in the selected district
@@ -96,13 +90,14 @@ class _revenue_state extends State<revenue> {
                 _SalesData(45, row[3]*96*18*0.02 + 0.0),
               ];
             }
-          });
+          
           break;
         }
       }
       break;
     }
     rev = ProjectRevenue(salesData[1].revenue, salesData[2].revenue, salesData[3].revenue);
+    return;
   }
 
 
@@ -110,371 +105,377 @@ class _revenue_state extends State<revenue> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xffeff8f8),
-      body: Stack(
-        children: <Widget>[
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            decoration: BoxDecoration(
-              border: Border.all(width: 1.0, color: const Color(0xff707070)),
-            ),
-          ),
-          SizedBox(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            child: Stack(
-              children: <Widget>[
-                Pinned.fromSize(
-                  bounds: Rect.fromLTWH(0.0, 0.0, MediaQuery.of(context).size.width, MediaQuery.of(context).size.height),
-                  size: Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height),
-                  pinLeft: true,
-                  pinRight: true,
-                  pinTop: true,
-                  pinBottom: true,
+      body: FutureBuilder(
+        future: loadData(loc.district),
+        builder: (context, snapshot) {
+          if(snapshot.connectionState != ConnectionState.done) return Center(child: CircularProgressIndicator());
+          return Stack(
+            children: <Widget>[
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                decoration: BoxDecoration(
+                  border: Border.all(width: 1.0, color: const Color(0xff707070)),
+                ),
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                child: Stack(
+                  children: <Widget>[
+                    Pinned.fromSize(
+                      bounds: Rect.fromLTWH(0.0, 0.0, MediaQuery.of(context).size.width, MediaQuery.of(context).size.height),
+                      size: Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height),
+                      pinLeft: true,
+                      pinRight: true,
+                      pinTop: true,
+                      pinBottom: true,
+                      child: Stack(
+                        children: <Widget>[
+                          Pinned.fromSize(
+                            bounds: Rect.fromLTWH(0.0, 0.0, MediaQuery.of(context).size.width, MediaQuery.of(context).size.height),
+                            size: Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height),
+                            pinLeft: true,
+                            pinRight: true,
+                            pinTop: true,
+                            pinBottom: true,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: const Color(0xffeff8f8),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(0x29000000),
+                                    offset: Offset(0, 3),
+                                    blurRadius: 6,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height/4,
+                decoration: BoxDecoration(
+                  color: const Color(0xffb7e0ee),
+                ),
+              ),
+              Transform.translate(
+                offset: Offset(0, MediaQuery.of(context).size.height/20),
+                child:
+                // Adobe XD layer: 'logo3-07' (group)
+                SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height/7,
                   child: Stack(
                     children: <Widget>[
                       Pinned.fromSize(
-                        bounds: Rect.fromLTWH(0.0, 0.0, MediaQuery.of(context).size.width, MediaQuery.of(context).size.height),
-                        size: Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height),
+                        bounds: Rect.fromLTWH(0.0, 0.0, MediaQuery.of(context).size.width, MediaQuery.of(context).size.height/2.8),
+                        size: Size(MediaQuery.of(context).size.width, 320.0),
                         pinLeft: true,
                         pinRight: true,
                         pinTop: true,
                         pinBottom: true,
-                        child: Container(
+                        child:
+                        // Adobe XD layer: 'logo3-07' (shape)
+                        Container(
+                          height: MediaQuery.of(context).size.height/2.8,
                           decoration: BoxDecoration(
-                            color: const Color(0xffeff8f8),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0x29000000),
-                                offset: Offset(0, 3),
-                                blurRadius: 6,
-                              ),
-                            ],
+                            image: DecorationImage(
+                              image: const AssetImage('assets/images/bgo_building.png'),
+                              fit: BoxFit.fill,
+                            ),
                           ),
                         ),
                       ),
                     ],
                   ),
                 ),
-              ],
-            ),
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height/4,
-            decoration: BoxDecoration(
-              color: const Color(0xffb7e0ee),
-            ),
-          ),
-          Transform.translate(
-            offset: Offset(0, MediaQuery.of(context).size.height/20),
-            child:
-            // Adobe XD layer: 'logo3-07' (group)
-            SizedBox(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height/7,
-              child: Stack(
-                children: <Widget>[
-                  Pinned.fromSize(
-                    bounds: Rect.fromLTWH(0.0, 0.0, MediaQuery.of(context).size.width, MediaQuery.of(context).size.height/2.8),
-                    size: Size(MediaQuery.of(context).size.width, 320.0),
-                    pinLeft: true,
-                    pinRight: true,
-                    pinTop: true,
-                    pinBottom: true,
-                    child:
-                    // Adobe XD layer: 'logo3-07' (shape)
-                    Container(
-                      height: MediaQuery.of(context).size.height/2.8,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: const AssetImage('assets/images/bgo_building.png'),
-                          fit: BoxFit.fill,
+              ),
+              Transform.translate(
+                offset: Offset(MediaQuery.of(context).size.width/14, MediaQuery.of(context).size.height/6),
+                child: Container(
+                  width: MediaQuery.of(context).size.width/1.175,
+                  height: MediaQuery.of(context).size.height/1.45,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15.0),
+                    color: const Color(0xffffffff),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0x29000000),
+                        offset: Offset(0, 3),
+                        blurRadius: 6,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Transform.translate(
+                offset: Offset(MediaQuery.of(context).size.width/1.8, MediaQuery.of(context).size.height/1.1),
+                child: SizedBox(
+                    width: MediaQuery.of(context).size.width/4,
+                    height: MediaQuery.of(context).size.height/24,
+                    child: Container(
+                      child: OutlineButton(
+                        color: const Color(0xffb7e0ee),
+                        onPressed: () async{
+                          if(proj.revenueID != null){
+                            setState(() {
+                              loc.id = proj.locationID;
+                              costs.id = proj.projectCostsID;
+                              rev.id = proj.revenueID;
+                              project.projectID = proj.projectID;
+                            });
+                          }
+                          var collRef = Firestore.instance.collection('locations');
+                          await collRef.document(loc.id).setData({
+                            'longitude': loc.longitude,
+                            'latitude': loc.latitude,
+                            'city': loc.city,
+                            'country': loc.country,
+                            'district': loc.district,
+                            'population': loc.population,
+                            'competitors': loc.competitors
+                          });
+                          collRef = Firestore.instance.collection('costs');
+                          await collRef.document(costs.id).setData({
+                            'fixedCost': costs.fixedCost,
+                            'variableCost': costs.variableCost,
+                            'FCost': costs.fCost,
+                            'eqCost': costs.eqCost,
+                            'rCost': costs.rCost,
+                          });
+                          collRef = Firestore.instance.collection('revenue');
+                          await collRef.document(rev.id).setData({
+                            'value1': rev.value1,
+                            'value2': rev.value2,
+                            'value3': rev.value3
+                          });
+                          project.projectCostsID = costs.id;
+                          project.locationID = loc.id;
+                          project.revenueID = rev.id;
+                          collRef = Firestore.instance.collection('project');
+                          await collRef.document(project.projectID).setData({
+                            'name' : project.projectName,
+                            'capital': project.capital,
+                            'industry': project.industry,
+                            'owner': project.projectOwnerID,
+                            'favourite': false,
+                            'locationID': project.locationID,
+                            'revenueID': project.revenueID,
+                            'costsID': project.projectCostsID,
+                            'minSpace': project.minSpace,
+                            'maxSpace': project.maxSpace,
+                            'space': project.space,
+                          });
+                          Timer(Duration(seconds: 3),
+                                  ()=>Navigator.pushReplacement(context,
+                                  MaterialPageRoute(builder:
+                                      (context) =>
+                                      home_page(project.projectOwnerID)
+                                  )
+                              )
+                          );
+                          alertFinishedDialog(context);
+                        },
+                        shape: new RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                        ),
+                        child: Text(
+                          'حفظ' ,
+                          style: TextStyle(
+                              shadows: <Shadow>[
+                                Shadow(
+                                  offset: Offset(0.0, 0.0),
+                                  blurRadius: 3.0,
+                                  color: Color.fromARGB(50, 0, 0, 50),
+                                ),
+                              ],
+                              color: Colors.blue,
+                              fontSize: 18
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                ],
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(52.0),
+                        gradient: LinearGradient(
+                          begin: Alignment(0.0, -1.0),
+                          end: Alignment(0.0, 1.0),
+                          colors: [
+                            const Color(0xfffcffff),
+                            const Color(0xfff3f8f7),
+                            const Color(0xfff7fbfa),
+                            const Color(0xffffffff)
+                          ],
+                          stops: [0.0, 0.325, 0.906, 1.0],
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0x29000000),
+                            offset: Offset(0, 3),
+                            blurRadius: 6,
+                          ),
+                        ],
+                      ),
+                    )
+                ),
               ),
-            ),
-          ),
-          Transform.translate(
-            offset: Offset(MediaQuery.of(context).size.width/14, MediaQuery.of(context).size.height/6),
-            child: Container(
-              width: MediaQuery.of(context).size.width/1.175,
-              height: MediaQuery.of(context).size.height/1.45,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15.0),
-                color: const Color(0xffffffff),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0x29000000),
-                    offset: Offset(0, 3),
-                    blurRadius: 6,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Transform.translate(
-            offset: Offset(MediaQuery.of(context).size.width/1.8, MediaQuery.of(context).size.height/1.1),
-            child: SizedBox(
-                width: MediaQuery.of(context).size.width/4,
-                height: MediaQuery.of(context).size.height/24,
-                child: Container(
-                  child: OutlineButton(
-                    color: const Color(0xffb7e0ee),
-                    onPressed: () async{
-                      if(proj.revenueID != null){
-                        setState(() {
-                          loc.id = proj.locationID;
-                          costs.id = proj.projectCostsID;
-                          rev.id = proj.revenueID;
-                          project.projectID = proj.projectID;
-                        });
-                      }
-                      var collRef = Firestore.instance.collection('locations');
-                      await collRef.document(loc.id).setData({
-                        'longitude': loc.longitude,
-                        'latitude': loc.latitude,
-                        'city': loc.city,
-                        'country': loc.country,
-                        'district': loc.district,
-                        'population': loc.population,
-                        'competitors': loc.competitors
-                      });
-                      collRef = Firestore.instance.collection('costs');
-                      await collRef.document(costs.id).setData({
-                        'fixedCost': costs.fixedCost,
-                        'variableCost': costs.variableCost,
-                        'FCost': costs.fCost,
-                        'eqCost': costs.eqCost,
-                        'rCost': costs.rCost,
-                      });
-                      collRef = Firestore.instance.collection('revenue');
-                      await collRef.document(rev.id).setData({
-                        'value1': rev.value1,
-                        'value2': rev.value2,
-                        'value3': rev.value3
-                      });
-                      project.projectCostsID = costs.id;
-                      project.locationID = loc.id;
-                      project.revenueID = rev.id;
-                      collRef = Firestore.instance.collection('project');
-                      await collRef.document(project.projectID).setData({
-                        'name' : project.projectName,
-                        'capital': project.capital,
-                        'industry': project.industry,
-                        'owner': project.projectOwnerID,
-                        'favourite': false,
-                        'locationID': project.locationID,
-                        'revenueID': project.revenueID,
-                        'costsID': project.projectCostsID,
-                        'minSpace': project.minSpace,
-                        'maxSpace': project.maxSpace,
-                        'space': project.space,
-                      });
-                      Timer(Duration(seconds: 3),
-                              ()=>Navigator.pushReplacement(context,
+              Transform.translate(
+                offset: Offset(MediaQuery.of(context).size.width/4.7, MediaQuery.of(context).size.height/1.1),
+                child: SizedBox(
+                    width: MediaQuery.of(context).size.width/4,
+                    height: MediaQuery.of(context).size.height/24,
+                    child: Container(
+                      child: OutlineButton(
+                        color: const Color(0xffb7e0ee),
+                        onPressed: (){
+                          Navigator.pushReplacement(context,
                               MaterialPageRoute(builder:
                                   (context) =>
-                                  home_page(project.projectOwnerID)
-                              )
-                          )
-                      );
-                      alertFinishedDialog(context);
-                    },
-                    shape: new RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                    ),
-                    child: Text(
-                      'حفظ' ,
-                      style: TextStyle(
-                          shadows: <Shadow>[
-                            Shadow(
-                              offset: Offset(0.0, 0.0),
-                              blurRadius: 3.0,
-                              color: Color.fromARGB(50, 0, 0, 50),
-                            ),
+                                  basic_costs(project.capital, costs.rCost , project , loc , null))
+                          );
+                        },
+                        shape: new RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                        ),
+                        child: Text(
+                          'إلغاء' ,
+                          style: TextStyle(
+                              shadows: <Shadow>[
+                                Shadow(
+                                  offset: Offset(0.0, 0.0),
+                                  blurRadius: 3.0,
+                                  color: Color.fromARGB(50, 0, 0, 50),
+                                ),
+                              ],
+                              color: Colors.blue,
+                              fontSize: 18
+                          ),
+                        ),
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(52.0),
+                        gradient: LinearGradient(
+                          begin: Alignment(0.0, -1.0),
+                          end: Alignment(0.0, 1.0),
+                          colors: [
+                            const Color(0xfffcffff),
+                            const Color(0xfff3f8f7),
+                            const Color(0xfff7fbfa),
+                            const Color(0xffffffff)
                           ],
-                          color: Colors.blue,
-                          fontSize: 18
+                          stops: [0.0, 0.325, 0.906, 1.0],
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0x29000000),
+                            offset: Offset(0, 3),
+                            blurRadius: 6,
+                          ),
+                        ],
                       ),
-                    ),
-                  ),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(52.0),
-                    gradient: LinearGradient(
-                      begin: Alignment(0.0, -1.0),
-                      end: Alignment(0.0, 1.0),
-                      colors: [
-                        const Color(0xfffcffff),
-                        const Color(0xfff3f8f7),
-                        const Color(0xfff7fbfa),
-                        const Color(0xffffffff)
-                      ],
-                      stops: [0.0, 0.325, 0.906, 1.0],
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0x29000000),
-                        offset: Offset(0, 3),
-                        blurRadius: 6,
-                      ),
-                    ],
-                  ),
-                )
-            ),
-          ),
-          Transform.translate(
-            offset: Offset(MediaQuery.of(context).size.width/4.7, MediaQuery.of(context).size.height/1.1),
-            child: SizedBox(
-                width: MediaQuery.of(context).size.width/4,
-                height: MediaQuery.of(context).size.height/24,
-                child: Container(
-                  child: OutlineButton(
-                    color: const Color(0xffb7e0ee),
-                    onPressed: (){
-                      Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder:
-                              (context) =>
-                              basic_costs(project.capital, costs.rCost , project , loc , null))
-                      );
-                    },
-                    shape: new RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                    ),
-                    child: Text(
-                      'إلغاء' ,
-                      style: TextStyle(
-                          shadows: <Shadow>[
-                            Shadow(
-                              offset: Offset(0.0, 0.0),
-                              blurRadius: 3.0,
-                              color: Color.fromARGB(50, 0, 0, 50),
-                            ),
-                          ],
-                          color: Colors.blue,
-                          fontSize: 18
-                      ),
-                    ),
-                  ),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(52.0),
-                    gradient: LinearGradient(
-                      begin: Alignment(0.0, -1.0),
-                      end: Alignment(0.0, 1.0),
-                      colors: [
-                        const Color(0xfffcffff),
-                        const Color(0xfff3f8f7),
-                        const Color(0xfff7fbfa),
-                        const Color(0xffffffff)
-                      ],
-                      stops: [0.0, 0.325, 0.906, 1.0],
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0x29000000),
-                        offset: Offset(0, 3),
-                        blurRadius: 6,
-                      ),
-                    ],
-                  ),
-                )
-            ),
-          ),
-          Transform.translate(
-            offset: Offset(MediaQuery.of(context).size.width/3.5, MediaQuery.of(context).size.height/5.3),
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width/1.5,
-              child: Text(
-                '  الإيرادات السنوية المتوقعة',
-                style: TextStyle(
-                  fontFamily: 'STC',
-                  fontSize: 23,
-                  color: const Color(0xff1b5070),
+                    )
                 ),
-                textAlign: TextAlign.center,
               ),
-            ),
-          ),
-          Transform.translate(
-            offset: Offset(MediaQuery.of(context).size.width/4.5, MediaQuery.of(context).size.height/1.35),
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width/1.5,
-              child: Text(
-                'توقعات الايرادات في السنة ',
-                style: TextStyle(
-                  fontFamily: 'STC',
-                  fontSize: 18,
-                  color: const Color(0xff30a59a),
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
-          Transform.translate(
-            offset: Offset(MediaQuery.of(context).size.width/6.5, MediaQuery.of(context).size.height/4.2),
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width/1.4,
-              child: Text(
-                'ملاحظة: الإيرادات المتوقعة هي إيرادات تقريبية تعتمد على أكثر فئة عمرية استهلاكاً لكوب القهوة في الحي المُختار',
-                style: TextStyle(
-                  fontFamily: 'STC',
-                  fontSize: 10,
-                  color: const Color(0xff01756a),
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
-          Transform.translate(
-            offset: Offset(MediaQuery.of(context).size.width/20, MediaQuery.of(context).size.height/3.3),
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width/1.19,
-              height: MediaQuery.of(context).size.height/2.4,
-              child: SfCartesianChart(
-                  primaryXAxis: NumericAxis(
-                      title: AxisTitle(
-                          text: 'الفئات العمرية',
-                          textStyle: TextStyle(
-                              color: Colors.grey,
-                              fontFamily: 'Roboto',
-                              fontSize: 16,
-                              fontStyle: FontStyle.italic,
-                              fontWeight: FontWeight.w300
-                          )
-                      ),
-                    interval: 10
+              Transform.translate(
+                offset: Offset(MediaQuery.of(context).size.width/3.5, MediaQuery.of(context).size.height/5.3),
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width/1.5,
+                  child: Text(
+                    '  الإيرادات السنوية المتوقعة',
+                    style: TextStyle(
+                      fontFamily: 'STC',
+                      fontSize: 23,
+                      color: const Color(0xff1b5070),
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  primaryYAxis: NumericAxis(
-                      title: AxisTitle(
-                          text: 'الإيرادات',
-                          textStyle: TextStyle(
-                              color: Colors.grey,
-                              fontFamily: 'Roboto',
-                              fontSize: 16,
-                              fontStyle: FontStyle.italic,
-                              fontWeight: FontWeight.w300
-                          )
-                      ),
-                      numberFormat: NumberFormat.compact(),
+                ),
+              ),
+              Transform.translate(
+                offset: Offset(MediaQuery.of(context).size.width/4.5, MediaQuery.of(context).size.height/1.35),
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width/1.5,
+                  child: Text(
+                    'توقعات الايرادات في السنة ',
+                    style: TextStyle(
+                      fontFamily: 'STC',
+                      fontSize: 18,
+                      color: const Color(0xff30a59a),
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  tooltipBehavior: TooltipBehavior(enable: true),
-                  series: <ChartSeries<_SalesData, int>>[
-                    SplineSeries<_SalesData, int>(
-                      dataSource: salesData,
-                      xValueMapper: (_SalesData sales, _) => sales.year,
-                      yValueMapper: (_SalesData sales, _) => sales.revenue,
+                ),
+              ),
+              Transform.translate(
+                offset: Offset(MediaQuery.of(context).size.width/6.5, MediaQuery.of(context).size.height/4.2),
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width/1.4,
+                  child: Text(
+                    'ملاحظة: الإيرادات المتوقعة هي إيرادات تقريبية تعتمد على أكثر فئة عمرية استهلاكاً لكوب القهوة في الحي المُختار',
+                    style: TextStyle(
+                      fontFamily: 'STC',
+                      fontSize: 10,
                       color: const Color(0xff01756a),
-                      markerSettings: MarkerSettings(isVisible: true,color: const Color(0xff01756a)),
-                      name: ' توقعات الإيرادات'
                     ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+              Transform.translate(
+                offset: Offset(MediaQuery.of(context).size.width/20, MediaQuery.of(context).size.height/3.3),
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width/1.19,
+                  height: MediaQuery.of(context).size.height/2.4,
+                  child: SfCartesianChart(
+                      primaryXAxis: NumericAxis(
+                          title: AxisTitle(
+                              text: 'الفئات العمرية',
+                              textStyle: TextStyle(
+                                  color: Colors.grey,
+                                  fontFamily: 'Roboto',
+                                  fontSize: 16,
+                                  fontStyle: FontStyle.italic,
+                                  fontWeight: FontWeight.w300
+                              )
+                          ),
+                        interval: 10
+                      ),
+                      primaryYAxis: NumericAxis(
+                          title: AxisTitle(
+                              text: 'الإيرادات',
+                              textStyle: TextStyle(
+                                  color: Colors.grey,
+                                  fontFamily: 'Roboto',
+                                  fontSize: 16,
+                                  fontStyle: FontStyle.italic,
+                                  fontWeight: FontWeight.w300
+                              )
+                          ),
+                          numberFormat: NumberFormat.compact(),
+                      ),
+                      tooltipBehavior: TooltipBehavior(enable: true),
+                      series: <ChartSeries<_SalesData, int>>[
+                        SplineSeries<_SalesData, int>(
+                          dataSource: salesData,
+                          xValueMapper: (_SalesData sales, _) => sales.year,
+                          yValueMapper: (_SalesData sales, _) => sales.revenue,
+                          color: const Color(0xff01756a),
+                          markerSettings: MarkerSettings(isVisible: true,color: const Color(0xff01756a)),
+                          name: ' توقعات الإيرادات'
+                        ),
 
-                  ]),
-            ),
-          ),
-        ],
+                      ]),
+                ),
+              ),
+            ],
+          );
+        }
       ),
     );
   }
